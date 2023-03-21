@@ -140,8 +140,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static int8_t CUSTOM_HID_Init_FS(void);
 static int8_t CUSTOM_HID_DeInit_FS(void);
-static int8_t CUSTOM_HID_OutEvent_FS(uint8_t* state);
-//(uint8_t event_idx, uint8_t state);
+static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state);
 
 /**
   * @}
@@ -190,12 +189,11 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
   * @param  state: Event state
   * @retval USBD_OK if all operations are OK else USBD_FAIL
   */
-//(uint8_t event_idx, uint8_t state)
-static int8_t CUSTOM_HID_OutEvent_FS(uint8_t* state)
+static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
 {
   /* USER CODE BEGIN 6 */
 	//To copy the reception buffer into the report_buffer variable 
-	memcpy(report_buffer, state, 64);
+	//memcpy(report_buffer, state, 64);
 	flag_rx = 1; 
   return (USBD_OK);
   /* USER CODE END 6 */

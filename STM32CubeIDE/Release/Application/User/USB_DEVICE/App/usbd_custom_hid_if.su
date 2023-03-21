@@ -1,0 +1,3 @@
+D:/my_workspace/my_fw/stm_joy/USB_DEVICE/App/usbd_custom_hid_if.c:169:15:CUSTOM_HID_Init_FS	0	static
+D:/my_workspace/my_fw/stm_joy/USB_DEVICE/App/usbd_custom_hid_if.c:194:15:CUSTOM_HID_OutEvent_FS	0	static
+D:/my_workspace/my_fw/stm_joy/USB_DEVICE/App/usbd_custom_hid_if.c:180:15:CUSTOM_HID_DeInit_FS	0	static
