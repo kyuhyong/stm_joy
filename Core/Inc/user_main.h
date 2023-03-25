@@ -10,6 +10,12 @@
 #define bitflip(byte,nbit)  ((byte) ^=  (1<<(nbit)))
 #define bitcheck(byte,nbit) ((byte) &   (1<<(nbit)))
 
+typedef struct {
+	GPIO_TypeDef* port;
+	uint16_t pin;
+	uint16_t bit_order;
+}GPIO_PortType;	
+
 void TIM4_ISR(void);
 void USER_Config(void);
 void USER_Loop(void);
