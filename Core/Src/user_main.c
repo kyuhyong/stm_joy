@@ -29,15 +29,16 @@ const GPIO_PortType gpio_ports[GPIO_PORT_NUM] = {	// { Port Address, Pin #, Bit 
 	{S18_GPIO_Port, S18_Pin, 	17}
 };
 
-#define ADC_CHANNEL_NUM		2			// Number of ADC channels to be reported
-#define ADC_SAMPLE_NUM		10			//
-#define ADC_IDLE0			3500
-#define ADC_IDLE1			3600
-#define ADC_IDLE2			3500
+#define ADC_DMA_CHANNEL_NUM		4
+#define ADC_REPORT_NUM			2			// Number of ADC channels to be reported
+#define ADC_SAMPLE_NUM			10			// Average filter data num
+//#define ADC_IDLE0				3500
+//#define ADC_IDLE1				3600
+//#define ADC_IDLE2				3500
 
-uint16_t 	adc_vals[8]={0,};
-uint16_t	adc_buffer[ADC_CHANNEL_NUM][ADC_SAMPLE_NUM] = {{0,},};
-uint16_t	adc_avgs[ADC_CHANNEL_NUM]={0,};
+uint16_t 	adc_vals[ADC_DMA_CHANNEL_NUM]={0,};
+uint16_t	adc_buffer[ADC_REPORT_NUM][ADC_SAMPLE_NUM] = {{0,},};
+uint16_t	adc_report_vals[ADC_REPORT_NUM]={0,};
 
 extern ADC_HandleTypeDef hadc1;
 extern TIM_HandleTypeDef htim4;
@@ -49,8 +50,6 @@ uint8_t flag_rx = 0;					//Variable to store the reception flag
  
 //extern the USB handler 
 extern USBD_HandleTypeDef hUsbDeviceFS; 
-
-
 
 uint8_t		flg_1ms = 0;
 uint64_t 	timer_ms = 0;
@@ -97,7 +96,7 @@ void USER_Config(void)
 	{ 
 		tx_buffer[i] = i; 
 	}
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_vals, 8);
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_vals, ADC_DMA_CHANNEL_NUM);
   	HAL_TIM_Base_Start_IT(&htim4);
 	HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET);
 }
@@ -125,9 +124,9 @@ void USER_Loop(void)
 		// Update gpio state
 		_read_gpio();
 		//Update adc channels
-		adc_avgs[0] = _adc_avg(adc_buffer[0], adc_vals[0], ADC_SAMPLE_NUM);
-		adc_avgs[1] = _adc_avg(adc_buffer[1], adc_vals[1], ADC_SAMPLE_NUM);
-		//adc_avgs[2] = _adc_avg(adc_buffer[2], adc_vals[2], ADC_SAMPLE_NUM);
+		adc_report_vals[0] = _adc_avg(adc_buffer[0], adc_vals[3], ADC_SAMPLE_NUM);	// X axis associated with adc_channel 3
+		adc_report_vals[1] = _adc_avg(adc_buffer[1], adc_vals[2], ADC_SAMPLE_NUM);	// Y axis associated with adc channel 2
+		//adc_report_vals[2] = _adc_avg(adc_buffer[2], adc_vals[2], ADC_SAMPLE_NUM);
 		//if(adc_avgs[0] > ADC_IDLE0) bitset(gpio_state_bits, 6); else bitclear(gpio_state_bits, 6);
 		//if(adc_avgs[1] > ADC_IDLE1) bitset(gpio_state_bits, 7); else bitclear(gpio_state_bits, 7);
 		//if(adc_avgs[2] > ADC_IDLE2) bitset(gpio_state_bits, 8); else bitclear(gpio_state_bits, 8);
@@ -135,10 +134,10 @@ void USER_Loop(void)
 		tx_buffer[0] = gpio_state_bits[0]&0xFF;
 		tx_buffer[1] = (gpio_state_bits[0]>>8)&0xFF;
 		tx_buffer[2] = gpio_state_bits[1]&0xFF;
-		tmp = adc_avgs[0];
+		tmp = adc_report_vals[0];
 		tx_buffer[3] = tmp&0xFF;
 		tx_buffer[4] = (tmp>>8)&0xFF;
-		tmp = adc_avgs[1];
+		tmp = adc_report_vals[1];
 		tx_buffer[5] = tmp&0xFF;
 		tx_buffer[6] = (tmp>>8)&0xFF;
 		//tmp = adc_avgs[2];

@@ -21,9 +21,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, DATA
   8 .data         00000180  20000000  08008e84  00020000  2**3
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          00000984  20000180  08009004  00020180  2**3
+  9 .bss          0000097c  20000180  08009004  00020180  2**3
                   ALLOC
- 10 ._user_heap_stack 00000604  20000b04  08009004  00020b04  2**0
+ 10 ._user_heap_stack 00000604  20000afc  08009004  00020afc  2**0
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  00020180  2**0
                   CONTENTS, READONLY
@@ -37,15 +37,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_rnglists 00000d3e  00000000  00000000  00037720  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_macro  0001af5e  00000000  00000000  0003845e  2**0
+ 17 .debug_macro  0001af64  00000000  00000000  0003845e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_line   00016442  00000000  00000000  000533bc  2**0
+ 18 .debug_line   00016442  00000000  00000000  000533c2  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    00091ffe  00000000  00000000  000697fe  2**0
+ 19 .debug_str    0009201a  00000000  00000000  00069804  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_frame  00004734  00000000  00000000  000fb7fc  2**2
+ 20 .debug_frame  00004734  00000000  00000000  000fb820  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 0000004d  00000000  00000000  000fff30  2**0
+ 21 .debug_line_str 0000004d  00000000  00000000  000fff54  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1205,7 +1205,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
  80006c2:	bf00      	nop
  80006c4:	bd80      	pop	{r7, pc}
  80006c6:	bf00      	nop
- 80006c8:	200007bc 	.word	0x200007bc
+ 80006c8:	200007b4 	.word	0x200007b4
 
 080006cc <TIM4_IRQHandler>:
 
@@ -1503,8 +1503,8 @@ void USER_Config(void)
  800088c:	2b06      	cmp	r3, #6
  800088e:	d9f5      	bls.n	800087c <USER_Config+0xc>
 	}
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_vals, 8);
- 8000890:	2208      	movs	r2, #8
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adc_vals, ADC_DMA_CHANNEL_NUM);
+ 8000890:	2204      	movs	r2, #4
  8000892:	4909      	ldr	r1, [pc, #36]	; (80008b8 <USER_Config+0x48>)
  8000894:	4809      	ldr	r0, [pc, #36]	; (80008bc <USER_Config+0x4c>)
  8000896:	f000 fa23 	bl	8000ce0 <HAL_ADC_Start_DMA>
@@ -1521,7 +1521,7 @@ void USER_Config(void)
  80008ae:	3708      	adds	r7, #8
  80008b0:	46bd      	mov	sp, r7
  80008b2:	bd80      	pop	{r7, pc}
- 80008b4:	20000298 	.word	0x20000298
+ 80008b4:	20000290 	.word	0x20000290
  80008b8:	2000025c 	.word	0x2000025c
  80008bc:	2000019c 	.word	0x2000019c
  80008c0:	20000210 	.word	0x20000210
@@ -1562,11 +1562,13 @@ void USER_Loop(void)
  80008e8:	d14c      	bne.n	8000984 <USER_Loop+0xbc>
 	{
 		int16_t tmp;
+		// Update gpio state
 		_read_gpio();
  80008ea:	f7ff ff01 	bl	80006f0 <_read_gpio>
-		adc_avgs[0] = _adc_avg(adc_buffer[0], adc_vals[0], ADC_SAMPLE_NUM);
+		//Update adc channels
+		adc_report_vals[0] = _adc_avg(adc_buffer[0], adc_vals[3], ADC_SAMPLE_NUM);
  80008ee:	4b37      	ldr	r3, [pc, #220]	; (80009cc <USER_Loop+0x104>)
- 80008f0:	881b      	ldrh	r3, [r3, #0]
+ 80008f0:	88db      	ldrh	r3, [r3, #6]
  80008f2:	220a      	movs	r2, #10
  80008f4:	4619      	mov	r1, r3
  80008f6:	4836      	ldr	r0, [pc, #216]	; (80009d0 <USER_Loop+0x108>)
@@ -1575,9 +1577,9 @@ void USER_Loop(void)
  80008fe:	461a      	mov	r2, r3
  8000900:	4b34      	ldr	r3, [pc, #208]	; (80009d4 <USER_Loop+0x10c>)
  8000902:	801a      	strh	r2, [r3, #0]
-		adc_avgs[1] = _adc_avg(adc_buffer[1], adc_vals[1], ADC_SAMPLE_NUM);
+		adc_report_vals[1] = _adc_avg(adc_buffer[1], adc_vals[2], ADC_SAMPLE_NUM);
  8000904:	4b31      	ldr	r3, [pc, #196]	; (80009cc <USER_Loop+0x104>)
- 8000906:	885b      	ldrh	r3, [r3, #2]
+ 8000906:	889b      	ldrh	r3, [r3, #4]
  8000908:	220a      	movs	r2, #10
  800090a:	4619      	mov	r1, r3
  800090c:	4832      	ldr	r0, [pc, #200]	; (80009d8 <USER_Loop+0x110>)
@@ -1586,7 +1588,7 @@ void USER_Loop(void)
  8000914:	461a      	mov	r2, r3
  8000916:	4b2f      	ldr	r3, [pc, #188]	; (80009d4 <USER_Loop+0x10c>)
  8000918:	805a      	strh	r2, [r3, #2]
-		//adc_avgs[2] = _adc_avg(adc_buffer[2], adc_vals[2], ADC_SAMPLE_NUM);
+		//adc_report_vals[2] = _adc_avg(adc_buffer[2], adc_vals[2], ADC_SAMPLE_NUM);
 		//if(adc_avgs[0] > ADC_IDLE0) bitset(gpio_state_bits, 6); else bitclear(gpio_state_bits, 6);
 		//if(adc_avgs[1] > ADC_IDLE1) bitset(gpio_state_bits, 7); else bitclear(gpio_state_bits, 7);
 		//if(adc_avgs[2] > ADC_IDLE2) bitset(gpio_state_bits, 8); else bitclear(gpio_state_bits, 8);
@@ -1611,7 +1613,7 @@ void USER_Loop(void)
  8000936:	b2da      	uxtb	r2, r3
  8000938:	4b29      	ldr	r3, [pc, #164]	; (80009e0 <USER_Loop+0x118>)
  800093a:	709a      	strb	r2, [r3, #2]
-		tmp = adc_avgs[0];
+		tmp = adc_report_vals[0];
  800093c:	4b25      	ldr	r3, [pc, #148]	; (80009d4 <USER_Loop+0x10c>)
  800093e:	881b      	ldrh	r3, [r3, #0]
  8000940:	80fb      	strh	r3, [r7, #6]
@@ -1627,7 +1629,7 @@ void USER_Loop(void)
  8000952:	b2da      	uxtb	r2, r3
  8000954:	4b22      	ldr	r3, [pc, #136]	; (80009e0 <USER_Loop+0x118>)
  8000956:	711a      	strb	r2, [r3, #4]
-		tmp = adc_avgs[1];
+		tmp = adc_report_vals[1];
  8000958:	4b1e      	ldr	r3, [pc, #120]	; (80009d4 <USER_Loop+0x10c>)
  800095a:	885b      	ldrh	r3, [r3, #2]
  800095c:	80fb      	strh	r3, [r7, #6]
@@ -1682,17 +1684,17 @@ void USER_Loop(void)
  80009ba:	46bd      	mov	sp, r7
  80009bc:	bdb0      	pop	{r4, r5, r7, pc}
  80009be:	bf00      	nop
- 80009c0:	200002e0 	.word	0x200002e0
- 80009c4:	200002a0 	.word	0x200002a0
- 80009c8:	200002e1 	.word	0x200002e1
+ 80009c0:	200002d8 	.word	0x200002d8
+ 80009c4:	20000298 	.word	0x20000298
+ 80009c8:	200002d9 	.word	0x200002d9
  80009cc:	2000025c 	.word	0x2000025c
- 80009d0:	2000026c 	.word	0x2000026c
- 80009d4:	20000294 	.word	0x20000294
- 80009d8:	20000280 	.word	0x20000280
+ 80009d0:	20000264 	.word	0x20000264
+ 80009d4:	2000028c 	.word	0x2000028c
+ 80009d8:	20000278 	.word	0x20000278
  80009dc:	20000258 	.word	0x20000258
- 80009e0:	20000298 	.word	0x20000298
- 80009e4:	200002f8 	.word	0x200002f8
- 80009e8:	200002e8 	.word	0x200002e8
+ 80009e0:	20000290 	.word	0x20000290
+ 80009e4:	200002f0 	.word	0x200002f0
+ 80009e8:	200002e0 	.word	0x200002e0
  80009ec:	20000008 	.word	0x20000008
  80009f0:	40011000 	.word	0x40011000
 
@@ -1718,8 +1720,8 @@ void TIM4_ISR(void)
  8000a12:	46bd      	mov	sp, r7
  8000a14:	bc80      	pop	{r7}
  8000a16:	4770      	bx	lr
- 8000a18:	200002e8 	.word	0x200002e8
- 8000a1c:	200002e1 	.word	0x200002e1
+ 8000a18:	200002e0 	.word	0x200002e0
+ 8000a1c:	200002d9 	.word	0x200002d9
 
 08000a20 <Reset_Handler>:
   .weak Reset_Handler
@@ -1805,7 +1807,7 @@ LoopFillZerobss:
   ldr r2, =_sbss
  8000a60:	20000180 	.word	0x20000180
   ldr r4, =_ebss
- 8000a64:	20000b04 	.word	0x20000b04
+ 8000a64:	20000afc 	.word	0x20000afc
 
 08000a68 <ADC1_2_IRQHandler>:
  * @retval : None
@@ -1953,7 +1955,7 @@ __weak void HAL_IncTick(void)
  8000b10:	bc80      	pop	{r7}
  8000b12:	4770      	bx	lr
  8000b14:	20000014 	.word	0x20000014
- 8000b18:	200002f0 	.word	0x200002f0
+ 8000b18:	200002e8 	.word	0x200002e8
 
 08000b1c <HAL_GetTick>:
   * @note  This function is declared as __weak to be overwritten in case of other
@@ -1972,7 +1974,7 @@ __weak uint32_t HAL_GetTick(void)
  8000b26:	46bd      	mov	sp, r7
  8000b28:	bc80      	pop	{r7}
  8000b2a:	4770      	bx	lr
- 8000b2c:	200002f0 	.word	0x200002f0
+ 8000b2c:	200002e8 	.word	0x200002e8
 
 08000b30 <HAL_ADC_Init>:
   *         of structure "ADC_InitTypeDef".
@@ -20055,7 +20057,7 @@ static void USBD_SetConfig(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
  800818a:	3708      	adds	r7, #8
  800818c:	46bd      	mov	sp, r7
  800818e:	bd80      	pop	{r7, pc}
- 8008190:	200002f4 	.word	0x200002f4
+ 8008190:	200002ec 	.word	0x200002ec
 
 08008194 <USBD_GetConfig>:
 * @param  pdev: device instance
@@ -20813,7 +20815,7 @@ void MX_USB_DEVICE_Init(void)
  8008570:	bf00      	nop
  8008572:	bd80      	pop	{r7, pc}
  8008574:	20000130 	.word	0x20000130
- 8008578:	200002f8 	.word	0x200002f8
+ 8008578:	200002f0 	.word	0x200002f0
  800857c:	20000018 	.word	0x20000018
  8008580:	20000120 	.word	0x20000120
 
@@ -20887,7 +20889,7 @@ static int8_t CUSTOM_HID_OutEvent_FS(uint8_t event_idx, uint8_t state)
  80085be:	bc80      	pop	{r7}
  80085c0:	4770      	bx	lr
  80085c2:	bf00      	nop
- 80085c4:	200002e0 	.word	0x200002e0
+ 80085c4:	200002d8 	.word	0x200002d8
 
 080085c8 <USBD_FS_DeviceDescriptor>:
   * @param  speed : Current device speed
@@ -20988,7 +20990,7 @@ uint8_t * USBD_FS_ProductStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length
  800863e:	46bd      	mov	sp, r7
  8008640:	bd80      	pop	{r7, pc}
  8008642:	bf00      	nop
- 8008644:	200005bc 	.word	0x200005bc
+ 8008644:	200005b4 	.word	0x200005b4
  8008648:	08008d70 	.word	0x08008d70
 
 0800864c <USBD_FS_ManufacturerStrDescriptor>:
@@ -21017,7 +21019,7 @@ uint8_t * USBD_FS_ManufacturerStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *l
  8008666:	3708      	adds	r7, #8
  8008668:	46bd      	mov	sp, r7
  800866a:	bd80      	pop	{r7, pc}
- 800866c:	200005bc 	.word	0x200005bc
+ 800866c:	200005b4 	.word	0x200005b4
  8008670:	08008d88 	.word	0x08008d88
 
 08008674 <USBD_FS_SerialStrDescriptor>:
@@ -21096,7 +21098,7 @@ uint8_t * USBD_FS_ConfigStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *length)
  80086c6:	46bd      	mov	sp, r7
  80086c8:	bd80      	pop	{r7, pc}
  80086ca:	bf00      	nop
- 80086cc:	200005bc 	.word	0x200005bc
+ 80086cc:	200005b4 	.word	0x200005b4
  80086d0:	08008d9c 	.word	0x08008d9c
 
 080086d4 <USBD_FS_InterfaceStrDescriptor>:
@@ -21140,7 +21142,7 @@ uint8_t * USBD_FS_InterfaceStrDescriptor(USBD_SpeedTypeDef speed, uint16_t *leng
  8008702:	46bd      	mov	sp, r7
  8008704:	bd80      	pop	{r7, pc}
  8008706:	bf00      	nop
- 8008708:	200005bc 	.word	0x200005bc
+ 8008708:	200005b4 	.word	0x200005b4
  800870c:	08008db0 	.word	0x08008db0
 
 08008710 <Get_SerialNum>:
@@ -21675,7 +21677,7 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
  80089fa:	46bd      	mov	sp, r7
  80089fc:	bd80      	pop	{r7, pc}
  80089fe:	bf00      	nop
- 8008a00:	200007bc 	.word	0x200007bc
+ 8008a00:	200007b4 	.word	0x200007b4
  8008a04:	40005c00 	.word	0x40005c00
 
 08008a08 <USBD_LL_Start>:
@@ -22128,7 +22130,7 @@ void *USBD_static_malloc(uint32_t size)
  8008c76:	46bd      	mov	sp, r7
  8008c78:	bc80      	pop	{r7}
  8008c7a:	4770      	bx	lr
- 8008c7c:	20000aac 	.word	0x20000aac
+ 8008c7c:	20000aa4 	.word	0x20000aa4
 
 08008c80 <USBD_static_free>:
   * @brief  Dummy memory free
