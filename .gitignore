@@ -56,3 +56,5 @@ Backup*
 *.bak
 
 BrowseInfo/
+Debug/
+Release/
