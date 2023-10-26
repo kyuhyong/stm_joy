@@ -100,13 +100,13 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
     0xa1, 0x00,                    //   COLLECTION (Physical)
     0x05, 0x09,                    //     USAGE_PAGE (Button)
     0x19, 0x01,                    //     USAGE_MINIMUM (Button 1)
-    0x29, 0x09,                    //     USAGE_MAXIMUM (Button 9)
+    0x29, 0x0a,                    //     USAGE_MAXIMUM (Button 10)
     0x15, 0x00,                    //     LOGICAL_MINIMUM (0)
     0x25, 0x01,                    //     LOGICAL_MAXIMUM (1)
-    0x95, 0x09,                    //     REPORT_COUNT (9)
+    0x95, 0x0a,                    //     REPORT_COUNT (10)
     0x75, 0x01,                    //     REPORT_SIZE (1)
     0x81, 0x02,                    //     INPUT (Data,Var,Abs)
-    0x95, 0x07,                    //     REPORT_COUNT (7)
+    0x95, 0x06,                    //     REPORT_COUNT (6)
     0x75, 0x01,                    //     REPORT_SIZE (1)
     0x81, 0x03,                    //     INPUT (Cnst,Var,Abs)
     0x05, 0x01,                    //     USAGE_PAGE (Generic Desktop)
@@ -118,7 +118,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
     0x75, 0x10,                    //     REPORT_SIZE (16)
     0x95, 0x03,                    //     REPORT_COUNT (3)
     0x81, 0x02,                    //     INPUT (Data,Var,Abs)
-    0xc0,                          //     END_COLLECTION
+    0xc0,                          //   END_COLLECTION
   /* USER CODE END 0 */
   0xC0    /*     END_COLLECTION	             */
 };

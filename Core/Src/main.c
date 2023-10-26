@@ -353,6 +353,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(PB1_OUT_GPIO_Port, PB1_OUT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, PA8_OUT_Pin|PA9_OUT_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : LED0_Pin */
   GPIO_InitStruct.Pin = LED0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -360,34 +366,33 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LED0_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB0_EXTI0_Pin PB1_EXTI1_Pin PB2_EXTI2_Pin PB3_EXTI3_Pin
-                           PB4_EXTI4_Pin PB5_EXTI5_Pin PB6_EXTI6_Pin PB7_EXTI7_Pin
-                           PB8_EXTI8_Pin PB9_EXTI9_Pin */
-  GPIO_InitStruct.Pin = PB0_EXTI0_Pin|PB1_EXTI1_Pin|PB2_EXTI2_Pin|PB3_EXTI3_Pin
-                          |PB4_EXTI4_Pin|PB5_EXTI5_Pin|PB6_EXTI6_Pin|PB7_EXTI7_Pin
-                          |PB8_EXTI8_Pin|PB9_EXTI9_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  /*Configure GPIO pins : PB0_IN_Pin PB3_IN_Pin PB4_IN_Pin PB5_IN_Pin
+                           PB6_IN_Pin PB7_IN_Pin PB8_IN_Pin */
+  GPIO_InitStruct.Pin = PB0_IN_Pin|PB3_IN_Pin|PB4_IN_Pin|PB5_IN_Pin
+                          |PB6_IN_Pin|PB7_IN_Pin|PB8_IN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  /*Configure GPIO pin : PB1_OUT_Pin */
+  GPIO_InitStruct.Pin = PB1_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(PB1_OUT_GPIO_Port, &GPIO_InitStruct);
 
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI1_IRQn);
+  /*Configure GPIO pins : PB2_IN_Pin PB9_IN_Pin */
+  GPIO_InitStruct.Pin = PB2_IN_Pin|PB9_IN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI3_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+  /*Configure GPIO pins : PA8_OUT_Pin PA9_OUT_Pin */
+  GPIO_InitStruct.Pin = PA8_OUT_Pin|PA9_OUT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
