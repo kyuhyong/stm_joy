@@ -23,6 +23,9 @@
 # IAR Debug Exe
 **/Debug/Exe/
 
+Debug/
+Release/
+
 # IAR Debug List
 **/Debug/List
 
